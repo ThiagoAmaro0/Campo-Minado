@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
     public Action updateGridAction;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         instance = this;
         _grid = new Grid(_width, _height);
@@ -23,13 +23,40 @@ public class GameManager : MonoBehaviour
     private void SetupBombs()
     {
         int _bombs = 0;
+
         while (_bombs != _bombCount)
         {
             if (PlaceBomb())
                 _bombs++;
         }
 
+        for (int x = 0; x < _grid.GetSize().x; x++)
+        {
+            for (int y = 0; y < _grid.GetSize().y; y++)
+            {
+                CheckBombs(x, y);
+            }
+        }
+
         updateGridAction?.Invoke();
+    }
+
+    private void CheckBombs(int x, int y)
+    {
+        if (_grid.GetValue(x, y) != -1)
+        {
+            int value = 0;
+            for (int i = -1; i < 2; i++)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    if (x + i > 0 && x + i < _grid.GetSize().x && y + j > 0 && y + j < _grid.GetSize().y)
+                        if (_grid.GetValue(x + i, y + j) == -1)
+                            value++;
+                }
+            }
+            _grid.SetCell(x, y, value);
+        }
     }
 
     private bool PlaceBomb()
@@ -46,6 +73,11 @@ public class GameManager : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public Grid GetGrid()
+    {
+        return _grid;
     }
 
     // Update is called once per frame

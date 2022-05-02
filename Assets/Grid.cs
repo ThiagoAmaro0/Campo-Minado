@@ -20,4 +20,15 @@ public class Grid
     {
         return _grid[_x, _y];
     }
+
+    public void WorldToGrid(Vector3 pos, out int x, out int y)
+    {
+        x = Mathf.FloorToInt(pos.x);
+        y = Mathf.FloorToInt(pos.y);
+    }
+
+    public Vector2Int GetSize()
+    {
+        return new Vector2Int(_grid.GetLength(0), _grid.GetLength(1));
+    }
 }
